@@ -23,7 +23,8 @@ import { getRandomColor } from "../utils/getMuiColor";
 const Todo = () => {
   const [title, setTitle] = useState<string>("");
   const [category, setCategory] = useState<string>("");
-  const [updateTodoTitle, setUpdateTodoTitle] = useState<boolean>(false);
+  const [isUpdateTodoClicked, setIsUpdateTodoClicked] =
+    useState<boolean>(false);
   const [updateTodos, setUpdateTodos] = useState<
     Pick<ITodo, "id" | "title" | "category">
   >({ id: "", title: "", category: "" });
@@ -137,7 +138,7 @@ const Todo = () => {
                     onChange={() => handleCompleteTodo(todo)}
                   />
                   <Chip label={todo.category} color={todo.categoryChipColor} />
-                  {updateTodoTitle && updateTodos.id === todo.id && (
+                  {isUpdateTodoClicked && updateTodos.id === todo.id && (
                     <form
                       style={{
                         display: "flex",
@@ -154,7 +155,7 @@ const Todo = () => {
                           })
                         );
                         setUpdateTodos({ id: "", title: "", category: "" });
-                        setUpdateTodoTitle(false);
+                        setIsUpdateTodoClicked(false);
                       }}
                     >
                       <TextField
@@ -207,7 +208,7 @@ const Todo = () => {
                       <EditIcon
                         color="secondary"
                         onClick={() => {
-                          setUpdateTodoTitle(true);
+                          setIsUpdateTodoClicked(true);
                           setUpdateTodos({
                             id: todo.id,
                             title: todo.title,
