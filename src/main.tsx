@@ -4,7 +4,7 @@ import { store } from "./redux/store.ts";
 import { Provider } from "react-redux";
 import "./index.css";
 import { ThemeProvider } from "@emotion/react";
-import { theme } from "./theme.ts";
+import { theme } from "./utils/theme.ts";
 import { CssBaseline } from "@mui/material";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
