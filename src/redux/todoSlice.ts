@@ -1,9 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export type MuiStandardColors =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "error"
+  | "warning"
+  | "info"
+  | "success";
 export interface ITodo {
   id: string;
   title: string;
+  category: string;
+  categoryChipColor: MuiStandardColors;
   isCompleted: boolean;
 }
 
@@ -39,10 +49,11 @@ export const todoSlice = createSlice({
       localStorage.setItem("todos", JSON.stringify(state.todos));
     },
     updateTodo: (state, action: PayloadAction<ITodo>) => {
-      const { id, title, isCompleted } = action.payload;
+      const { id, title, category, isCompleted } = action.payload;
       const findTodo = state.todos.find((todo) => todo.id === id);
       if (findTodo) {
         findTodo.title = title;
+        findTodo.category = category;
         findTodo.isCompleted = isCompleted;
       }
       localStorage.setItem("todos", JSON.stringify(state.todos));

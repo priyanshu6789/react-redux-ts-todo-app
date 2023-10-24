@@ -4,15 +4,13 @@ import { ITodo, addTodo, deleteTodo, updateTodo } from "../redux/todoSlice";
 import { RootState } from "../redux/store";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
 import Fab from "@mui/material/Fab";
 import SaveIcon from "@mui/icons-material/Save";
-
+import Chip from "@mui/material/Chip";
 import {
   Box,
   Checkbox,
-  FormControlLabel,
   IconButton,
   Paper,
   Stack,
@@ -20,13 +18,16 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { getRandomColor } from "../utils/getMuiColor";
 
 const Todo = () => {
   const [title, setTitle] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
   const [updateTodoTitle, setUpdateTodoTitle] = useState<boolean>(false);
-  const [updateTitle, setUpdateTitle] = useState<{ id: string; title: string }>(
-    { id: "", title: "" }
-  );
+  const [updateTodos, setUpdateTodos] = useState<
+    Pick<ITodo, "id" | "title" | "category">
+  >({ id: "", title: "", category: "" });
+
   const dispatch = useDispatch();
   const todos = useSelector((state: RootState) => state.todo.todos);
 
@@ -35,10 +36,13 @@ const Todo = () => {
     const todo: ITodo = {
       id: Date.now() + "",
       title,
+      category,
+      categoryChipColor: getRandomColor(),
       isCompleted: false,
     };
     dispatch(addTodo(todo));
     setTitle("");
+    setCategory("");
   };
 
   const handleDelete = (id: string) => {
@@ -47,6 +51,7 @@ const Todo = () => {
   const handleCompleteTodo = (todo: ITodo) => {
     dispatch(updateTodo({ ...todo, isCompleted: !todo.isCompleted }));
   };
+
   return (
     <Box sx={{ width: "90%" }}>
       <Typography variant="h3" gutterBottom sx={{ textAlign: "center" }}>
@@ -58,6 +63,7 @@ const Todo = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          gap: "1.5rem",
         }}
       >
         <TextField
@@ -70,7 +76,19 @@ const Todo = () => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setTitle(e.target.value)
           }
-          sx={{ width: "90%" }}
+          sx={{ width: "40%" }}
+          required
+        />
+        <TextField
+          label="Category"
+          variant="standard"
+          type="text"
+          name="category"
+          id="category"
+          value={category}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setCategory(e.target.value)
+          }
           required
         />
         <Fab color="primary" aria-label="add" type="submit">
@@ -118,7 +136,8 @@ const Todo = () => {
                     defaultChecked={todo.isCompleted}
                     onChange={() => handleCompleteTodo(todo)}
                   />
-                  {updateTodoTitle && updateTitle.id === todo.id && (
+                  <Chip label={todo.category} color={todo.categoryChipColor} />
+                  {updateTodoTitle && updateTodos.id === todo.id && (
                     <form
                       style={{
                         display: "flex",
@@ -128,9 +147,13 @@ const Todo = () => {
                       onSubmit={(e: FormEvent<HTMLFormElement>) => {
                         e.preventDefault();
                         dispatch(
-                          updateTodo({ ...todo, title: updateTitle.title })
+                          updateTodo({
+                            ...todo,
+                            title: updateTodos.title,
+                            category: updateTodos.category,
+                          })
                         );
-                        setUpdateTitle({ id: "", title: "" });
+                        setUpdateTodos({ id: "", title: "", category: "" });
                         setUpdateTodoTitle(false);
                       }}
                     >
@@ -138,11 +161,24 @@ const Todo = () => {
                         id="update"
                         label="Update Title"
                         variant="standard"
-                        value={updateTitle.title}
+                        value={updateTodos.title}
                         onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          setUpdateTitle((prev) => ({
+                          setUpdateTodos((prev) => ({
                             ...prev,
                             title: e.target.value,
+                          }))
+                        }
+                        required
+                      />
+                      <TextField
+                        id="update"
+                        label="Update Category"
+                        variant="standard"
+                        value={updateTodos.category}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setUpdateTodos((prev) => ({
+                            ...prev,
+                            category: e.target.value,
                           }))
                         }
                         required
@@ -172,7 +208,11 @@ const Todo = () => {
                         color="secondary"
                         onClick={() => {
                           setUpdateTodoTitle(true);
-                          setUpdateTitle({ id: todo.id, title: todo.title });
+                          setUpdateTodos({
+                            id: todo.id,
+                            title: todo.title,
+                            category: todo.category,
+                          });
                         }}
                       />
                     </IconButton>
