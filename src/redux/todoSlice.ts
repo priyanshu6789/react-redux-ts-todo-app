@@ -11,8 +11,19 @@ interface ITodosState {
   todos: ITodo[];
 }
 
+const storedTodos = localStorage.getItem("todos");
+let parsedTodos: ITodo[] = [];
+
+if (storedTodos) {
+  try {
+    parsedTodos = JSON.parse(storedTodos);
+  } catch (error) {
+    console.error("Error parsing todos from local storage:", error);
+  }
+}
+
 const initialState: ITodosState = {
-  todos: [],
+  todos: parsedTodos,
 };
 
 export const todoSlice = createSlice({
@@ -21,9 +32,11 @@ export const todoSlice = createSlice({
   reducers: {
     addTodo: (state, action: PayloadAction<ITodo>) => {
       state.todos.push(action.payload);
+      localStorage.setItem("todos", JSON.stringify(state.todos));
     },
     deleteTodo: (state, action: PayloadAction<string>) => {
       state.todos = state.todos.filter((todo) => todo.id !== action.payload);
+      localStorage.setItem("todos", JSON.stringify(state.todos));
     },
     updateTodo: (state, action: PayloadAction<ITodo>) => {
       const { id, title, isCompleted } = action.payload;
@@ -32,6 +45,7 @@ export const todoSlice = createSlice({
         findTodo.title = title;
         findTodo.isCompleted = isCompleted;
       }
+      localStorage.setItem("todos", JSON.stringify(state.todos));
     },
   },
 });

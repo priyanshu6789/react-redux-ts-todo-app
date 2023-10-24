@@ -2,6 +2,24 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ITodo, addTodo, deleteTodo, updateTodo } from "../redux/todoSlice";
 import { RootState } from "../redux/store";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
+import Fab from "@mui/material/Fab";
+import SaveIcon from "@mui/icons-material/Save";
+
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  Paper,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 
 const Todo = () => {
   const [title, setTitle] = useState<string>("");
@@ -30,12 +48,21 @@ const Todo = () => {
     dispatch(updateTodo({ ...todo, isCompleted: !todo.isCompleted }));
   };
   return (
-    <>
-      <h1>My todo app</h1>
-
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="title">Title</label>
-        <input
+    <Box sx={{ width: "90%" }}>
+      <Typography variant="h3" gutterBottom sx={{ textAlign: "center" }}>
+        My todo app
+      </Typography>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <TextField
+          label="Title"
+          variant="standard"
           type="text"
           name="title"
           id="title"
@@ -43,62 +70,120 @@ const Todo = () => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setTitle(e.target.value)
           }
+          sx={{ width: "90%" }}
+          required
         />
-        <button type="submit">Add </button>
+        <Fab color="primary" aria-label="add" type="submit">
+          <AddIcon />
+        </Fab>
       </form>
-      {todos?.map((todo) => {
+      {todos.length === 0 && (
+        <Typography variant="h5" mt={2} sx={{ textAlign: "center" }}>
+          No todos found!
+        </Typography>
+      )}
+      {todos?.map((todo, index) => {
         return (
-          <div key={todo.id}>
-            <li>
-              {todo.title}
-              <br />
-              <label htmlFor="status">Status</label>
-              <input
-                type="checkbox"
-                id="status"
-                checked={todo.isCompleted}
-                onChange={() => handleCompleteTodo(todo)}
-              />
-              {!todo.isCompleted ? "Not done" : "Done"}
-              {updateTodoTitle && updateTitle.id === todo.id && (
-                <form
-                  onSubmit={(e: FormEvent<HTMLFormElement>) => {
-                    e.preventDefault();
-                    dispatch(updateTodo({ ...todo, title: updateTitle.title }));
-                    setUpdateTitle({ id: "", title: "" });
-                    setUpdateTodoTitle(false);
-                  }}
+          <Box key={todo.id} marginBlock={2}>
+            <Paper elevation={16} sx={{ height: "4.5rem", padding: "1rem" }}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
                 >
-                  <label htmlFor="update">Update Title</label>
-                  <input
-                    type="text"
-                    name=""
-                    id="update"
-                    value={updateTitle.title}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setUpdateTitle((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      textDecoration: todo.isCompleted
+                        ? "line-through"
+                        : "none",
+                      textDecorationColor: "#f50c0c",
+                    }}
+                  >
+                    {`${index + 1}. ${todo.title}`}
+                  </Typography>
+                </Stack>
+                <Stack
+                  direction="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  spacing={2}
+                >
+                  <Checkbox
+                    defaultChecked={todo.isCompleted}
+                    onChange={() => handleCompleteTodo(todo)}
                   />
-                  <button type="submit">Save</button>
-                </form>
-              )}
-            </li>
-            <button onClick={() => handleDelete(todo.id)}>Delete</button>
-            <button
-              onClick={() => {
-                setUpdateTodoTitle(true);
-                setUpdateTitle({ id: todo.id, title: todo.title });
-              }}
-            >
-              Update
-            </button>
-          </div>
+                  {updateTodoTitle && updateTitle.id === todo.id && (
+                    <form
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      onSubmit={(e: FormEvent<HTMLFormElement>) => {
+                        e.preventDefault();
+                        dispatch(
+                          updateTodo({ ...todo, title: updateTitle.title })
+                        );
+                        setUpdateTitle({ id: "", title: "" });
+                        setUpdateTodoTitle(false);
+                      }}
+                    >
+                      <TextField
+                        id="update"
+                        label="Update Title"
+                        variant="standard"
+                        value={updateTitle.title}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          setUpdateTitle((prev) => ({
+                            ...prev,
+                            title: e.target.value,
+                          }))
+                        }
+                        required
+                      />
+                      <Tooltip title="Save">
+                        <IconButton
+                          type="submit"
+                          aria-label="delete"
+                          color="info"
+                        >
+                          <SaveIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </form>
+                  )}
+                  <Tooltip title="Delete">
+                    <IconButton>
+                      <DeleteIcon
+                        onClick={() => handleDelete(todo.id)}
+                        color="error"
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Edit">
+                    <IconButton>
+                      <EditIcon
+                        color="secondary"
+                        onClick={() => {
+                          setUpdateTodoTitle(true);
+                          setUpdateTitle({ id: todo.id, title: todo.title });
+                        }}
+                      />
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+              </Stack>
+            </Paper>
+          </Box>
         );
       })}
-    </>
+    </Box>
   );
 };
 
