@@ -110,23 +110,83 @@ const Todo = () => {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Stack
-                  direction="row"
-                  justifyContent="center"
-                  alignItems="center"
-                >
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      textDecoration: todo.isCompleted
-                        ? "line-through"
-                        : "none",
-                      textDecorationColor: "#f50c0c",
+                {isUpdateTodoClicked && updateTodos.id === todo.id ? (
+                  <form
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "1rem",
+                    }}
+                    onSubmit={(e: FormEvent<HTMLFormElement>) => {
+                      e.preventDefault();
+                      dispatch(
+                        updateTodo({
+                          ...todo,
+                          title: updateTodos.title,
+                          category: updateTodos.category,
+                        })
+                      );
+                      setUpdateTodos({ id: "", title: "", category: "" });
+                      setIsUpdateTodoClicked(false);
                     }}
                   >
-                    {`${index + 1}. ${todo.title}`}
-                  </Typography>
-                </Stack>
+                    <TextField
+                      id="update"
+                      label="Update Title"
+                      variant="standard"
+                      value={updateTodos.title}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setUpdateTodos((prev) => ({
+                          ...prev,
+                          title: e.target.value,
+                        }))
+                      }
+                      required
+                    />
+                    <TextField
+                      id="update"
+                      label="Update Category"
+                      variant="standard"
+                      value={updateTodos.category}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        setUpdateTodos((prev) => ({
+                          ...prev,
+                          category: e.target.value,
+                        }))
+                      }
+                      required
+                    />
+                    <Tooltip title="Save">
+                      <IconButton
+                        type="submit"
+                        aria-label="delete"
+                        color="info"
+                      >
+                        <SaveIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </form>
+                ) : (
+                  <Stack
+                    direction="row"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        textDecoration: todo.isCompleted
+                          ? "line-through"
+                          : "none",
+                        textDecorationColor: "#ff0303",
+                      }}
+                    >
+                      {`${index + 1}. ${todo.title}`}
+                    </Typography>
+                  </Stack>
+                )}
+
                 <Stack
                   direction="row"
                   justifyContent="center"
@@ -138,63 +198,7 @@ const Todo = () => {
                     onChange={() => handleCompleteTodo(todo)}
                   />
                   <Chip label={todo.category} color={todo.categoryChipColor} />
-                  {isUpdateTodoClicked && updateTodos.id === todo.id && (
-                    <form
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                      onSubmit={(e: FormEvent<HTMLFormElement>) => {
-                        e.preventDefault();
-                        dispatch(
-                          updateTodo({
-                            ...todo,
-                            title: updateTodos.title,
-                            category: updateTodos.category,
-                          })
-                        );
-                        setUpdateTodos({ id: "", title: "", category: "" });
-                        setIsUpdateTodoClicked(false);
-                      }}
-                    >
-                      <TextField
-                        id="update"
-                        label="Update Title"
-                        variant="standard"
-                        value={updateTodos.title}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          setUpdateTodos((prev) => ({
-                            ...prev,
-                            title: e.target.value,
-                          }))
-                        }
-                        required
-                      />
-                      <TextField
-                        id="update"
-                        label="Update Category"
-                        variant="standard"
-                        value={updateTodos.category}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                          setUpdateTodos((prev) => ({
-                            ...prev,
-                            category: e.target.value,
-                          }))
-                        }
-                        required
-                      />
-                      <Tooltip title="Save">
-                        <IconButton
-                          type="submit"
-                          aria-label="delete"
-                          color="info"
-                        >
-                          <SaveIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </form>
-                  )}
+
                   <Tooltip title="Delete">
                     <IconButton>
                       <DeleteIcon
