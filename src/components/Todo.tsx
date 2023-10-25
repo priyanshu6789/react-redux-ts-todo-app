@@ -200,26 +200,22 @@ const Todo = () => {
                   <Chip label={todo.category} color={todo.categoryChipColor} />
 
                   <Tooltip title="Delete">
-                    <IconButton>
-                      <DeleteIcon
-                        onClick={() => handleDelete(todo.id)}
-                        color="error"
-                      />
+                    <IconButton onClick={() => handleDelete(todo.id)}>
+                      <DeleteIcon color="error" />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title="Edit">
-                    <IconButton>
-                      <EditIcon
-                        color="secondary"
-                        onClick={() => {
-                          setIsUpdateTodoClicked(true);
-                          setUpdateTodos({
-                            id: todo.id,
-                            title: todo.title,
-                            category: todo.category,
-                          });
-                        }}
-                      />
+                    <IconButton
+                      onClick={() => {
+                        setIsUpdateTodoClicked(true);
+                        setUpdateTodos({
+                          id: todo.id,
+                          title: todo.title,
+                          category: todo.category,
+                        });
+                      }}
+                    >
+                      <EditIcon color="secondary" />
                     </IconButton>
                   </Tooltip>
                 </Stack>
