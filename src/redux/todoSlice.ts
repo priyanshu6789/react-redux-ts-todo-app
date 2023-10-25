@@ -1,22 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-export type MuiStandardColors =
-  | "default"
-  | "primary"
-  | "secondary"
-  | "error"
-  | "warning"
-  | "info"
-  | "success";
-export interface ITodo {
-  id: string;
-  title: string;
-  category: string;
-  categoryChipColor: MuiStandardColors;
-  isCompleted: boolean;
-}
-
 interface ITodosState {
   todos: ITodo[];
 }

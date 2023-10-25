@@ -1,5 +1,3 @@
-import { MuiStandardColors } from "../redux/todoSlice";
-
 export const getRandomColor = (): MuiStandardColors => {
   const colors: MuiStandardColors[] = [
     "primary",
